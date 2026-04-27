@@ -24,7 +24,8 @@ process VISUALIZE_VCF {
 
     script:
     """
-    export PYTHONPATH=\$PYTHONPATH:./.local/lib/python3.9/site-packages
+    # Use single quotes for the export to prevent Nextflow from evaluating the variable
+    export PYTHONPATH='./.local/lib/python3.9/site-packages'
     pip install --target=./.local/lib/python3.9/site-packages matplotlib
     
     python3 ${baseDir}/plot_vaf.py $vcf
