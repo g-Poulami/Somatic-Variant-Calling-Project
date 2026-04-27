@@ -16,15 +16,17 @@ process VISUALIZE_VCF {
     container 'python:3.9-slim'
     publishDir "${params.outdir}/plots", mode: 'copy'
 
-    input:
-    path vcf
+    input: 
+    path vcf  // <--- Make sure this is 'vcf'
 
-    output:
+    output: 
     path "*.png"
 
     script:
     """
-    pip install matplotlib
+    export PYTHONPATH=\$PYTHONPATH:./.local/lib/python3.9/site-packages
+    pip install --target=./.local/lib/python3.9/site-packages matplotlib
+    
     python3 ${baseDir}/plot_vaf.py $vcf
     """
 }
