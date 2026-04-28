@@ -71,13 +71,16 @@ process FILTER_VARIANTS {
 process VISUALIZE_VCF {
     container 'python:3.9-slim'
     publishDir "${params.outdir}/plots", mode: 'copy'
-    input: path vcf
-    output: path "*.png"
+    input:
+        path vcf
+        path plot_script
+    output:
+        path "*.png"
     script:
     """
     pip install --target=. matplotlib
-    export PYTHONPATH=".:\$PYTHONPATH"
-    python3 ${baseDir}/plot_vaf.py $vcf
+    export PYTHONPATH=".:\${PYTHONPATH:-}"
+    python3 $plot_script $vcf
     """
 }
 
@@ -85,9 +88,13 @@ workflow {
     BWA_INDEX(params.genome)
     SAMTOOLS_FAIDX(params.genome)
     GATK_DICT(params.genome)
+    
     BWA_MEM(params.tumor_fastq, params.genome, BWA_INDEX.out)
     SAMTOOLS_SORT(BWA_MEM.out)
+    
     MUTECT2(SAMTOOLS_SORT.out.bam, params.genome, SAMTOOLS_FAIDX.out, GATK_DICT.out)
     FILTER_VARIANTS(MUTECT2.out.vcf_bundle, params.genome, SAMTOOLS_FAIDX.out, GATK_DICT.out)
-    VISUALIZE_VCF(FILTER_VARIANTS.out.vcf)
+    
+    // Call with the VCF and the script path
+    VISUALIZE_VCF(FILTER_VARIANTS.out.vcf, "${baseDir}/plot_vaf.py")
 }
