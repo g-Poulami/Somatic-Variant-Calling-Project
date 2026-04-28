@@ -61,3 +61,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Contact
 **g-Poulami**
 GitHub: [https://github.com/g-Poulami](https://github.com/g-Poulami)
+
+## Author
+
+Poulami Ghosh
