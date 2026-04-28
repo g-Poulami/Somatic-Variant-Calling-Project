@@ -4,3 +4,5 @@ work/
 results/
 data/
 bin/
+work/
+.nextflow*
