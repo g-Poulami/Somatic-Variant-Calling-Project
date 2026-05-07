@@ -5,12 +5,17 @@ params.tumor_fastq = "${launchDir}/data/fastq/tumor.fastq.gz"
 params.outdir      = "${launchDir}/results"
 
 process BWA_INDEX {
-    input:  path ref
-    output: path "${ref}.*"
+    input:
+    path ref
+
+    output:
+    path "${ref}.*"
+
     stub:
     """
     touch ${ref}.amb ${ref}.ann ${ref}.bwt ${ref}.pac ${ref}.sa
     """
+
     script:
     """
     bwa index $ref
@@ -18,12 +23,17 @@ process BWA_INDEX {
 }
 
 process SAMTOOLS_FAIDX {
-    input:  path ref
-    output: path "${ref}.fai"
+    input:
+    path ref
+
+    output:
+    path "${ref}.fai"
+
     stub:
     """
     touch ${ref}.fai
     """
+
     script:
     """
     samtools faidx $ref
@@ -31,12 +41,17 @@ process SAMTOOLS_FAIDX {
 }
 
 process GATK_DICT {
-    input:  path ref
-    output: path "${ref.baseName}.dict"
+    input:
+    path ref
+
+    output:
+    path "${ref.baseName}.dict"
+
     stub:
     """
     touch ${ref.baseName}.dict
     """
+
     script:
     """
     gatk CreateSequenceDictionary -R $ref
@@ -45,14 +60,18 @@ process GATK_DICT {
 
 process BWA_MEM {
     input:
-        path tumor
-        path ref
-        path index_files
-    output: path "aligned.sam"
+    path tumor
+    path ref
+    path index_files
+
+    output:
+    path "aligned.sam"
+
     stub:
     """
     touch aligned.sam
     """
+
     script:
     """
     bwa mem -R '@RG\\tID:lane1\\tLB:lib1\\tPL:illumina\\tSM:TumorSample' $ref $tumor > aligned.sam
@@ -61,12 +80,18 @@ process BWA_MEM {
 
 process SAMTOOLS_SORT {
     publishDir "${params.outdir}/bam", mode: 'copy'
-    input:  path sam
-    output: path "sorted.bam", emit: bam
+
+    input:
+    path sam
+
+    output:
+    path "sorted.bam", emit: bam
+
     stub:
     """
     touch sorted.bam sorted.bam.bai
     """
+
     script:
     """
     samtools view -Sb $sam | samtools sort -o sorted.bam && samtools index sorted.bam
@@ -75,15 +100,19 @@ process SAMTOOLS_SORT {
 
 process MUTECT2 {
     input:
-        path bam
-        path ref
-        path fai
-        path dict
-    output: path "raw_somatic.vcf.gz*", emit: vcf_bundle
+    path bam
+    path ref
+    path fai
+    path dict
+
+    output:
+    path "raw_somatic.vcf.gz*", emit: vcf_bundle
+
     stub:
     """
     touch raw_somatic.vcf.gz raw_somatic.vcf.gz.tbi raw_somatic.vcf.gz.stats
     """
+
     script:
     """
     gatk Mutect2 -R $ref -I $bam -O raw_somatic.vcf.gz
@@ -92,18 +121,22 @@ process MUTECT2 {
 
 process FILTER_VARIANTS {
     publishDir "${params.outdir}", mode: 'copy'
+
     input:
-        path vcf_bundle
-        path ref
-        path fai
-        path dict
+    path vcf_bundle
+    path ref
+    path fai
+    path dict
+
     output:
-        path "filtered_somatic.vcf.gz",     emit: vcf
-        path "filtered_somatic.vcf.gz.tbi"
+    path "filtered_somatic.vcf.gz",     emit: vcf
+    path "filtered_somatic.vcf.gz.tbi"
+
     stub:
     """
     touch filtered_somatic.vcf.gz filtered_somatic.vcf.gz.tbi
     """
+
     script:
     """
     gatk FilterMutectCalls -R $ref -V raw_somatic.vcf.gz -O filtered_somatic.vcf.gz
@@ -112,12 +145,18 @@ process FILTER_VARIANTS {
 
 process VISUALIZE_VCF {
     publishDir "${params.outdir}/plots", mode: 'copy'
-    input:  path vcf
-    output: path "*.png"
+
+    input:
+    path vcf
+
+    output:
+    path "*.png"
+
     stub:
     """
     touch stub_plot.png
     """
+
     script:
     """
     pip install --target=. matplotlib
