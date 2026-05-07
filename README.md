@@ -1,8 +1,8 @@
-# Somatic-Variant-Calling-Nextflow
+# Somatic-Variant-Calling-Project
 
 [![Nextflow](https://img.shields.io/badge/Nextflow-%E2%89%A523.04-brightgreen?style=flat-square)](https://nextflow.io)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
-[![CI](https://github.com/g-Poulami/Somatic-Variant-Calling-Project/actions/workflows/main.yml/badge.svg)]
+[![CI](https://github.com/g-Poulami/Somatic-Variant-Calling-Project/actions/workflows/main.yml/badge.svg)](https://github.com/g-Poulami/Somatic-Variant-Calling-Project/actions/workflows/main.yml)
 
 A scalable **Nextflow DSL2** pipeline for somatic mutation identification in paired tumour-normal cancer genomics datasets, implementing the GATK best-practice Mutect2 workflow.
 
@@ -17,52 +17,6 @@ This pipeline implements the GATK Mutect2 tumour-normal workflow with panel of n
 ---
 
 ## Pipeline Steps
-
-```
-Tumour FASTQ + Normal FASTQ
-          |
-          v
-   FastQC (raw)               -- per-sample read QC
-          |
-          v
-   Trimmomatic                -- adapter removal, quality trimming
-          |
-          v
-   FastQC (trimmed)           -- confirm trimming
-          |
-          v
-   BWA-MEM2 alignment         -- map tumour and normal to reference
-          |
-          v
-   SAMtools sort & index       -- coordinate-sorted BAMs
-          |
-          v
-   Picard MarkDuplicates       -- mark/remove PCR duplicates
-          |
-          v
-   GATK BQSR                  -- base quality score recalibration
-          |
-          v
-   GATK Mutect2                -- tumour-normal somatic variant calling
-   (+ Panel of Normals)
-          |
-          v
-   GATK GetPileupSummaries     -- estimate tumour contamination
-   GATK CalculateContamination
-          |
-          v
-   GATK LearnReadOrientationModel  -- orientation bias artefact detection
-          |
-          v
-   GATK FilterMutectCalls      -- apply all filters to somatic VCF
-          |
-          v
-   Filtered Somatic VCF
-          |
-          v
-   MultiQC                    -- aggregated QC report
-```
-
 ---
 
 ## Key Features
@@ -88,8 +42,8 @@ sudo mv nextflow /usr/local/bin/
 ### Stub run (no tools required)
 
 ```bash
-git clone https://github.com/g-Poulami/Somatic-Variant-Calling-Nextflow.git
-cd Somatic-Variant-Calling-Nextflow
+git clone https://github.com/g-Poulami/Somatic-Variant-Calling-Project.git
+cd Somatic-Variant-Calling-Project
 python3 test/generate_test_data.py
 nextflow run main.nf -profile test -stub-run
 ```
@@ -162,31 +116,6 @@ nextflow run main.nf -resume [other params]
 ---
 
 ## Project Structure
-
-```
-Somatic-Variant-Calling-Nextflow/
-├── main.nf
-├── nextflow.config
-├── assets/
-│   └── adapters.fa
-├── modules/
-│   ├── fastqc.nf
-│   ├── trimmomatic.nf
-│   ├── bwamem2.nf
-│   ├── samtools.nf
-│   ├── picard.nf
-│   ├── gatk_bqsr.nf
-│   ├── mutect2.nf
-│   ├── contamination.nf
-│   ├── filter_mutect.nf
-│   └── multiqc.nf
-├── test/
-│   └── generate_test_data.py
-└── .github/
-    └── workflows/
-        └── ci.yml
-```
-
 ---
 
 ## License
