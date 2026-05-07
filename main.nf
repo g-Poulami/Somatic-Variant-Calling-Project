@@ -5,7 +5,6 @@ params.tumor_fastq = "${launchDir}/data/fastq/tumor.fastq.gz"
 params.outdir      = "${launchDir}/results"
 
 process BWA_INDEX {
-    container 'quay.io/biocontainers/bwa:0.7.17--hed695b0_7'
     input:  path ref
     output: path "${ref}.*"
     stub:
@@ -19,7 +18,6 @@ process BWA_INDEX {
 }
 
 process SAMTOOLS_FAIDX {
-    container 'quay.io/biocontainers/samtools:1.17--h00cdaf9_0'
     input:  path ref
     output: path "${ref}.fai"
     stub:
@@ -33,7 +31,6 @@ process SAMTOOLS_FAIDX {
 }
 
 process GATK_DICT {
-    container 'broadinstitute/gatk:4.4.0.0'
     input:  path ref
     output: path "${ref.baseName}.dict"
     stub:
@@ -47,7 +44,6 @@ process GATK_DICT {
 }
 
 process BWA_MEM {
-    container 'quay.io/biocontainers/bwa:0.7.17--hed695b0_7'
     input:
         path tumor
         path ref
@@ -64,7 +60,6 @@ process BWA_MEM {
 }
 
 process SAMTOOLS_SORT {
-    container 'quay.io/biocontainers/samtools:1.17--h00cdaf9_0'
     publishDir "${params.outdir}/bam", mode: 'copy'
     input:  path sam
     output: path "sorted.bam", emit: bam
@@ -79,7 +74,6 @@ process SAMTOOLS_SORT {
 }
 
 process MUTECT2 {
-    container 'broadinstitute/gatk:4.4.0.0'
     input:
         path bam
         path ref
@@ -97,7 +91,6 @@ process MUTECT2 {
 }
 
 process FILTER_VARIANTS {
-    container 'broadinstitute/gatk:4.4.0.0'
     publishDir "${params.outdir}", mode: 'copy'
     input:
         path vcf_bundle
@@ -118,7 +111,6 @@ process FILTER_VARIANTS {
 }
 
 process VISUALIZE_VCF {
-    container 'python:3.9-slim'
     publishDir "${params.outdir}/plots", mode: 'copy'
     input:  path vcf
     output: path "*.png"
