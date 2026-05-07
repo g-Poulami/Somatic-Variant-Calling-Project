@@ -2,7 +2,8 @@
 
 [![Nextflow](https://img.shields.io/badge/Nextflow-%E2%89%A523.04-brightgreen?style=flat-square)](https://nextflow.io)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
-[![CI](https://github.com/g-Poulami/Somatic-Variant-Calling-Nextflow/actions/workflows/ci.yml/badge.svg)](https://github.com/g-Poulami/Somatic-Variant-Calling-Nextflow/actions/workflows/ci.yml)
+- [![CI](https://github.com/g-Poulami/Somatic-Variant-Calling-Nextflow/actions/workflows/ci.yml/badge.svg)]
++ [![CI](https://github.com/g-Poulami/Somatic-Variant-Calling-Project/actions/workflows/main.yml/badge.svg)]
 
 A scalable **Nextflow DSL2** pipeline for somatic mutation identification in paired tumour-normal cancer genomics datasets, implementing the GATK best-practice Mutect2 workflow.
 
