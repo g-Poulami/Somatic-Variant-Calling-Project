@@ -4,6 +4,9 @@ params.genome      = "${launchDir}/data/ref/genome.fa"
 params.tumor_fastq = "${launchDir}/data/fastq/tumor.fastq.gz"
 params.outdir      = "${launchDir}/results"
 
+genome_file = file(params.genome)
+tumor_file  = file(params.tumor_fastq)
+
 process BWA_INDEX {
     input:
     path ref
@@ -166,12 +169,12 @@ process VISUALIZE_VCF {
 }
 
 workflow {
-    BWA_INDEX(params.genome)
-    SAMTOOLS_FAIDX(params.genome)
-    GATK_DICT(params.genome)
-    BWA_MEM(params.tumor_fastq, params.genome, BWA_INDEX.out)
+    BWA_INDEX(genome_file)
+    SAMTOOLS_FAIDX(genome_file)
+    GATK_DICT(genome_file)
+    BWA_MEM(tumor_file, genome_file, BWA_INDEX.out)
     SAMTOOLS_SORT(BWA_MEM.out)
-    MUTECT2(SAMTOOLS_SORT.out.bam, params.genome, SAMTOOLS_FAIDX.out, GATK_DICT.out)
-    FILTER_VARIANTS(MUTECT2.out.vcf_bundle, params.genome, SAMTOOLS_FAIDX.out, GATK_DICT.out)
+    MUTECT2(SAMTOOLS_SORT.out.bam, genome_file, SAMTOOLS_FAIDX.out, GATK_DICT.out)
+    FILTER_VARIANTS(MUTECT2.out.vcf_bundle, genome_file, SAMTOOLS_FAIDX.out, GATK_DICT.out)
     VISUALIZE_VCF(FILTER_VARIANTS.out.vcf)
 }
